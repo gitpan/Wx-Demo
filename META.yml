@@ -1,0 +1,18 @@
+# http://module-build.sourceforge.net/META-spec.html
+#XXXXXXX This is a prototype!!!  It will change in the future!!! XXXXX#
+name:         Wx-Demo
+version:      0.01
+version_from: bin/wxperl_demo.pl
+installdirs:  site
+requires:
+    Class::Accessor::Fast:         0.2
+    File::chdir:                   0.06
+    File::Slurp:                   0.01
+    File::Spec:                    0.8
+    IO::String:                    1.08
+    Module::Pluggable:             3.1
+    UNIVERSAL::require:            0.1
+    Wx:                            0.57
+
+distribution_type: module
+generated_by: ExtUtils::MakeMaker version 6.30
