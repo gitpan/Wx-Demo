@@ -1,6 +1,6 @@
 # http://module-build.sourceforge.net/META-spec.html
 name:         Wx-Demo
-version:      0.05
+version:      0.06
 version_from: bin/wxperl_demo.pl
 installdirs:  site
 author:       Mattia Barbon <mbarbon@cpan.org>
