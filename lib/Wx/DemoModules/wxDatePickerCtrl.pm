@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     18/03/2005
-## RCS-ID:      $Id: wxDatePickerCtrl.pm,v 1.2 2006/11/01 17:59:43 mbarbon Exp $
+## RCS-ID:      $Id: wxDatePickerCtrl.pm 2189 2007-08-21 18:15:31Z mbarbon $
 ## Copyright:   (c) 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself

@@ -1,22 +1,20 @@
 #############################################################################
-## Name:        lib/Wx/DemoModules/wxScrolledWindow.pm
-## Purpose:     wxPerl demo helper for Wx::ScrolledWindow
+## Name:        lib/Wx/DemoModules/wxVScrolledWindow.pm
+## Purpose:     wxPerl demo helper for Wx::VScrolledWindow
 ## Author:      Mattia Barbon
 ## Modified by:
-## Created:     18/05/2003
-## RCS-ID:      $Id: wxScrolledWindow.pm 2189 2007-08-21 18:15:31Z mbarbon $
-## Copyright:   (c) 2003, 2006 Mattia Barbon
+## Created:     21/08/2007
+## RCS-ID:      $Id: wxVScrolledWindow.pm 2203 2007-08-23 19:58:18Z mbarbon $
+## Copyright:   (c) 2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
 #############################################################################
 
-package Wx::DemoModules::wxScrolledWindow;
+package Wx::DemoModules::wxVScrolledWindow;
 
 use strict;
-use base qw(Wx::ScrolledWindow);
-use Wx qw(:sizer wxWHITE wxHORIZONTAL wxVERTICAL);
-
-sub SIZE() { 1000 }
+use base qw(Wx::PlVScrolledWindow);
+use Wx qw(wxWHITE wxHORIZONTAL wxVERTICAL);
 
 sub log_scroll_event {
   my( $event, $type ) = @_;
@@ -29,21 +27,17 @@ sub log_scroll_event {
   $event->Skip;
 }
 
-use Wx::Event qw(/EVT_SCROLLWIN_*/);
+use Wx::Event qw(/EVT_SCROLLWIN_*/ EVT_PAINT);
 
 sub new {
-  my $class = shift;
-  my $parent = shift;
+  my( $class, $parent ) = @_;
   my $this = $class->SUPER::new( $parent, -1 );
 
-  # set the total area the scrolled window will show: note that at any
-  # given time the window will only show a part of it
-  $this->SetVirtualSize( SIZE, SIZE );
-  # set the numer of pixels the window will scroll at a time
-  $this->SetScrollRate( 1, 1 );
+  $this->SetRowCount( 100 );
 
   $this->SetBackgroundColour( wxWHITE );
 
+  EVT_PAINT( $this, \&OnPaint );
   EVT_SCROLLWIN_TOP( $this,
                      sub { log_scroll_event( $_[1], 'to top' ) } );
   EVT_SCROLLWIN_BOTTOM( $this,
@@ -64,37 +58,38 @@ sub new {
   return $this;
 }
 
-# this is the easiest way to use a scrolled window; it is passed a
-# pre-scrolled Wx::DC. Alternatively derived classes may catch
-# paint events and call ->PrepareDC to pre-scroll the DC
+sub _h { int( ( ( $_[0] % 3 ) / 2 + 1.5 ) * 25 ) }
+
+*OnGetLineHeight = \&OnGetRowHeight; # for wxWidgets < 2.9
+sub OnGetRowHeight {
+    my( $this, $item ) = @_;
+
+    return _h( $item );
+}
+
 use Wx qw(wxSOLID wxTRANSPARENT_PEN wxBLACK_PEN);
 
-sub OnDraw {
-  my( $this, $dc ) = @_;
+sub OnPaint {
+  my( $this, $event ) = @_;
+  my $dc = Wx::PaintDC->new( $this );
 
   $dc->SetPen( wxBLACK_PEN );
 
-  for ( 0 .. 10 ) {
-    $dc->DrawLine( 0, $_ * 100, SIZE, $_ * 100 );
-    $dc->DrawLine( $_ * 100, 0, $_ * 100, SIZE );
-  }
+  my( $first, $last ) = ( $this->GetVisibleBegin, $this->GetVisibleEnd );
+  my $w = $this->GetClientSize->x;
 
-  $dc->SetPen( wxTRANSPARENT_PEN );
-
-  for my $x ( 0 .. 9 ) {
-      for my $y ( 0 .. 9 ) {
-          my $c = 255 - ( $x + $y ) * 255 / 18;
-
-          $dc->SetBrush( Wx::Brush->new( Wx::Colour->new( $c, $c, $c ),
-                                         wxSOLID ) );
-
-          $dc->DrawRectangle( $x * 100 + 1,  $y * 100 + 1,
-                              99, 99 );
-      }
+  my $y = 0;
+  for my $i ( $first .. $last - 1 ) {
+    my $c = 255 - ( $i % 3 ) * 60 * 255 / 100;
+    my $h = _h( $i );
+    $dc->SetBrush( Wx::Brush->new( Wx::Colour->new( $c, $c, $c ),
+                                   wxSOLID ) );
+    $dc->DrawRectangle( 0, $y, $w, $h + 1 );
+    $y += $h;
   }
 }
 
-sub add_to_tags  { qw(windows) }
-sub title { 'wxScrolledWindow' }
+sub add_to_tags  { qw(windows new) }
+sub title { 'wxVScrolledWindow' }
 
 1;

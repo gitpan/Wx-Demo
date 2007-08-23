@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     11/11/2006
-## RCS-ID:      $Id: wxRichTextCtrl.pm,v 1.2 2006/11/12 17:21:29 mbarbon Exp $
+## RCS-ID:      $Id: wxRichTextCtrl.pm 2189 2007-08-21 18:15:31Z mbarbon $
 ## Copyright:   (c) 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself

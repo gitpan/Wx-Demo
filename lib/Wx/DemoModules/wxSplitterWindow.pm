@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     23/08/2006
-## RCS-ID:      $Id: wxSplitterWindow.pm,v 1.1 2006/08/23 20:59:33 mbarbon Exp $
+## RCS-ID:      $Id: wxSplitterWindow.pm 2189 2007-08-21 18:15:31Z mbarbon $
 ## Copyright:   (c) 2000, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
