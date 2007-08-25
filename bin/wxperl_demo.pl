@@ -5,7 +5,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     14/08/2006
-## RCS-ID:      $Id: wxperl_demo.pl 2193 2007-08-21 21:31:45Z mbarbon $
+## RCS-ID:      $Id: wxperl_demo.pl 2208 2007-08-23 20:39:59Z mbarbon $
 ## Copyright:   (c) 2006-2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -16,7 +16,7 @@ use strict;
 use Wx::Demo;
 use Getopt::Long;
 
-our $VERSION = '0.08';
+our $VERSION = '0.09';
 
 GetOptions( 'show=s'   => \( my $module ),
             );

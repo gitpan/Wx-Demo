@@ -1,6 +1,6 @@
 # http://module-build.sourceforge.net/META-spec.html
 name:         Wx-Demo
-version:      0.08
+version:      0.09
 version_from: bin/wxperl_demo.pl
 installdirs:  site
 author:       Mattia Barbon <mbarbon@cpan.org>
@@ -11,7 +11,7 @@ requires:
   File::chdir:           0.06
   File::Slurp:           0.01
   File::Spec:             0.8
-  IO::String:            1.08
+  IO::Scalar:               2
   Module::Pluggable:      3.1
   UNIVERSAL::require:     0.1
   Wx:                    0.64

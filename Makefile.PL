@@ -5,7 +5,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     14/08/2006
-## RCS-ID:      $Id: Makefile.PL 2203 2007-08-23 19:58:18Z mbarbon $
+## RCS-ID:      $Id: Makefile.PL 2211 2007-08-24 20:17:38Z mbarbon $
 ## Copyright:   (c) 2006-2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -34,7 +34,7 @@ WriteMakefile
                          'Class::Accessor::Fast'   => 0.20,
                          'File::Slurp'             => 0.01,
                          'File::chdir'             => 0.06,
-                         'IO::String'              => 1.08,
+                         'IO::Scalar'              => 2.00,
                          },
     EXE_FILES       => [ qw(bin/wxperl_demo.pl) ],
     ( $] >= 5.005 ?
