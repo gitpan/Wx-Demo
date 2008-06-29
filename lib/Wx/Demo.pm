@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/08/2006
-## RCS-ID:      $Id: Demo.pm 2203 2007-08-23 19:58:18Z mbarbon $
+## RCS-ID:      $Id: Demo.pm 2417 2008-06-29 19:53:00Z mbarbon $
 ## Copyright:   (c) 2006-2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -303,11 +303,14 @@ sub load_plugins {
         );
 
     foreach my $package ( $finder->plugins ) {
+        next if $skip{$package};
         unless( $package->require ) {
             Wx::LogWarning( "Skipping module '%s'", $package );
             Wx::LogWarning( $_ ) foreach split /\n/, $@;
             my $f = "$package.pm"; $f =~ s{::}{/}g;
-            $INC{$f} = 'skip it';
+#            delete $INC{$f}; # for Perl 5.10
+#            $INC{$f} = 'skip it';
+            $INC{$f} = 'skip it' unless exists $INC{$f};
             $skip{$package} = 1;
         };
     }

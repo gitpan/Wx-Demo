@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     12/09/2001
-## RCS-ID:      $Id: wxListCtrl.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxListCtrl.pm 2322 2008-01-19 12:58:05Z mbarbon $
 ## Copyright:   (c) 2001, 2003-2004, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -238,9 +238,9 @@ sub new {
     $self->AssignImageList( $small, wxIMAGE_LIST_SMALL );
     $self->AssignImageList( $normal, wxIMAGE_LIST_NORMAL );
 
-    $self->InsertColumn( 1, "Type" );
-    $self->InsertColumn( 2, "Amount" );
-    $self->InsertColumn( 3, "Price" );
+    $self->InsertColumn( 0, "Type" );
+    $self->InsertColumn( 1, "Amount" );
+    $self->InsertColumn( 2, "Price" );
 
     foreach my $i ( 0 .. 50 ) {
         my $t = ( rand() * 100 ) % 3;
@@ -277,11 +277,11 @@ sub new {
     $self->AssignImageList( $small, wxIMAGE_LIST_SMALL );
     $self->AssignImageList( $normal, wxIMAGE_LIST_NORMAL );
 
-    $self->InsertColumn( 1, "Column 1" );
-    $self->InsertColumn( 2, "Column 2" );
-    $self->InsertColumn( 3, "Column 3" );
-    $self->InsertColumn( 4, "Column 4" );
-    $self->InsertColumn( 5, "Column 5" );
+    $self->InsertColumn( 0, "Column 1" );
+    $self->InsertColumn( 1, "Column 2" );
+    $self->InsertColumn( 2, "Column 3" );
+    $self->InsertColumn( 3, "Column 4" );
+    $self->InsertColumn( 4, "Column 5" );
     $self->SetItemCount( 100000 );
 
     return $self;

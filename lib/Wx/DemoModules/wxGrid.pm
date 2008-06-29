@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     08/12/2001
-## RCS-ID:      $Id: wxGrid.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxGrid.pm 2378 2008-04-26 04:21:45Z mdootson $
 ## Copyright:   (c) 2001, 2003, 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -42,6 +42,10 @@ sub new {
   $this->SetCellValue( 2, 2, "Second" );
   $this->SetCellValue( 3, 3, "Third" );
   $this->SetCellValue( 3, 1, "I'm green" );
+  $this->SetCellValue( 5, 1, "I will overflow because the cells to my right are empty.");
+  $this->SetCellValue( 6, 1, "I can stop overflow on an individual cell basis..");
+  $this->SetCellOverflow(6,1,0);
+  
 
   EVT_GRID_CELL_LEFT_CLICK( $this, c_log_skip( "Cell left click" ) );
   EVT_GRID_CELL_RIGHT_CLICK( $this, c_log_skip( "Cell right click" ) );

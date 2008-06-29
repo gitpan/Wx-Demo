@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     05/06/2003
-## RCS-ID:      $Id: wxGridCER.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxGridCER.pm 2378 2008-04-26 04:21:45Z mdootson $
 ## Copyright:   (c) 2003, 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -66,7 +66,15 @@ sub Draw {
   $dc->SetBrush( wxWHITE_BRUSH );
   $dc->SetFont(Wx::SystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT ));
   $dc->DrawEllipse( $rect->x, $rect->y, $rect->width, $rect->height );
+  
+  # should check $attr->GetOverflow and then IsEmpty on every cell to the right
+  # to extend $rect if overflow is true.
+  
+  $dc->DestroyClippingRegion();
+  $dc->SetClippingRegion($rect->x, $rect->y, $rect->width, $rect->height);
   $dc->DrawText( $grid->GetCellValue( $row, $col ), $rect->x, $rect->y );
+  $dc->DestroyClippingRegion();
+  
 }
 
 sub Clone {
