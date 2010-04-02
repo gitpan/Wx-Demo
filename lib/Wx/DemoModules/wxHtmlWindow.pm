@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     12/09/2001
-## RCS-ID:      $Id: wxHtmlWindow.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxHtmlWindow.pm 2812 2010-02-20 10:53:40Z mbarbon $
 ## Copyright:   (c) 2001, 2004, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -114,6 +114,7 @@ sub new {
   my $this = $class->SUPER::new( @_ );
 
   $this->LoadPage( Wx::Demo->get_data_file( 'html/index.html' ) );
+  print $this->ToText, "\n";
 
   Wx::LogMessage( Wx::Demo->get_data_file( 'html/index.html' ) );
   return $this;

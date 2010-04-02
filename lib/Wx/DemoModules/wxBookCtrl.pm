@@ -4,11 +4,17 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     01/10/2006
-## RCS-ID:      $Id: wxBookCtrl.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxBookCtrl.pm 2478 2008-09-09 15:03:18Z szabgab $
 ## Copyright:   (c) 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
 #############################################################################
+
+# Select page    needs a number 0-3
+# Set page text  needs a number 0-3 and some text
+# Set page image needs a number 0-3 and another number 0-6 which is the index
+#                                   in the list of images created in populate_control
+# 
 
 # base class
 package Wx::DemoModules::wxBookCtrl;
@@ -23,11 +29,35 @@ __PACKAGE__->mk_accessors( qw(bookctrl) );
 sub styles {
     my( $self ) = @_;
 
-    return ( [ wxBK_TOP, 'Top' ],
+    return ( [ wxBK_TOP,    'Top' ],
              [ wxBK_BOTTOM, 'Bottom' ],
-             [ wxBK_LEFT, 'Left' ],
-             [ wxBK_RIGHT, 'Right' ],
+             [ wxBK_LEFT,   'Left' ],
+             [ wxBK_RIGHT,  'Right' ],
              );
+}
+
+sub _check_selection {
+    my ($self, $selection) = @_;
+
+    if (not defined $selection or $selection !~ /^[0123]$/ ) {
+        Wx::MessageBox( 'Need a number (0,1,2,3)!', 'Error', wxYES, $self );
+        return 0;
+    } else {
+        return 1;
+    }
+}
+
+sub _check_text {
+    my ($self, $text) = @_;
+
+    if (not defined $text or $text eq '') {
+        my $msg  = "You could set the label to the empty string "; 
+           $msg .= " but it will look strange. So, please don't do it";
+        Wx::MessageBox( $msg, 'Error', wxYES, $self );
+        return 0;
+    } else {
+        return 1;
+    }
 }
 
 sub commands {
@@ -35,11 +65,17 @@ sub commands {
 
     return ( { label       => 'Select page',
                with_value  => 1,
-               action      => sub { $self->bookctrl->SetSelection( $_[0] ) },
+               action      => sub { $self->_check_selection( $_[0] )
+                                    and
+                                    $self->bookctrl->SetSelection( $_[0] ) },
                },
              { label       => 'Set page text',
                with_value  => 2,
-               action      => sub { $self->bookctrl
+               action      => sub { $self->_check_selection( $_[0] )
+                                    and
+                                    $self->_check_text( $_[1] )
+                                    and
+                                    $self->bookctrl
                                       ->SetPageText( $_[0], $_[1] ) },
                },
              { label       => 'Set page image',

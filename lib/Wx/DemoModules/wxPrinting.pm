@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     12/09/2001
-## RCS-ID:      $Id: wxPrinting.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxPrinting.pm 2786 2010-02-07 03:29:28Z mdootson $
 ## Copyright:   (c) 2001, 2003, 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -250,7 +250,7 @@ sub OnDraw {
   $dc->DrawEllipse( $x_size - 50 - 20, 20, 50, 50 );
   $dc->DrawEllipse( $x_size - 50 - 20, $y_size - 50 - 20, 50, 50 );
 
-  $dc->SetPen( Wx::Pen->new( wxRED, 5, 0 ) );
+  $dc->SetPen( Wx::Pen->new( wxRED, 5, wxSOLID ) );
   # wxGTK does not like DrawLines in this context
   foreach my $i ( @{$this->{LINES}} ) {
     my $prev;
@@ -278,7 +278,7 @@ sub OnMouseMove {
   push @{$this->{CURRENT_LINE}}, [ $x, $y ];
   my $elems = @{$this->{CURRENT_LINE}};
 
-  $dc->SetPen( Wx::Pen->new( wxRED, 5, 0 ) );
+  $dc->SetPen( Wx::Pen->new( wxRED, 5, wxSOLID ) );
   $dc->DrawLine( @{$this->{CURRENT_LINE}[$elems-2]},
                  @{$this->{CURRENT_LINE}[$elems-1]} );
 
@@ -301,7 +301,7 @@ sub OnButton {
     $this->CaptureMouse();
   }
 
-  $dc->SetPen( Wx::Pen->new( wxRED, 5, 0 ) );
+  $dc->SetPen( Wx::Pen->new( wxRED, 5, wxSOLID ) );
   $dc->DrawLine( $x, $y, $x, $y );
 }
 

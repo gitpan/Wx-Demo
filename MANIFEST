@@ -2,8 +2,12 @@ Changes
 MANIFEST
 Makefile.PL
 README.txt
+
 bin/wxperl_demo.pl
+
 lib/Wx/Demo.pm
+lib/Wx/Demo/Source.pm
+
 lib/Wx/DemoModules/files/artprovider/error.xpm
 lib/Wx/DemoModules/files/artprovider/info.xpm
 lib/Wx/DemoModules/files/artprovider/null.xpm
@@ -83,6 +87,7 @@ lib/Wx/DemoModules/wxGridER.pm
 lib/Wx/DemoModules/wxGridSizer.pm
 lib/Wx/DemoModules/wxGridTable.pm
 lib/Wx/DemoModules/wxHVScrolledWindow.pm
+lib/Wx/DemoModules/wxHeaderCtrlSimple.pm
 lib/Wx/DemoModules/wxHelpController.pm
 lib/Wx/DemoModules/wxHelpEvent.pm
 lib/Wx/DemoModules/wxHtmlDynamic.pm
@@ -96,6 +101,7 @@ lib/Wx/DemoModules/wxLocale.pm
 lib/Wx/DemoModules/wxMDI.pm
 lib/Wx/DemoModules/wxMediaCtrl.pm
 lib/Wx/DemoModules/wxMultiChoiceDialog.pm
+lib/Wx/DemoModules/wxOverlay.pm
 lib/Wx/DemoModules/wxPasswordEntryDialog.pm
 lib/Wx/DemoModules/wxPopupWindow.pm
 lib/Wx/DemoModules/wxPrinting.pm
@@ -111,6 +117,7 @@ lib/Wx/DemoModules/wxSingleChoiceDialog.pm
 lib/Wx/DemoModules/wxSlider.pm
 lib/Wx/DemoModules/wxSpinButton.pm
 lib/Wx/DemoModules/wxSpinCtrl.pm
+lib/Wx/DemoModules/wxSpinCtrlDouble.pm
 lib/Wx/DemoModules/wxSplashScreen.pm
 lib/Wx/DemoModules/wxSplitterWindow.pm
 lib/Wx/DemoModules/wxStaticBitmap.pm
@@ -125,6 +132,10 @@ lib/Wx/DemoModules/wxValidator.pm
 lib/Wx/DemoModules/wxWizard.pm
 lib/Wx/DemoModules/wxXrc.pm
 lib/Wx/DemoModules/wxXrcCustom.pm
+
 t/01_load.t
 t/zz_pod.t
+
+xt/02_load_plugins.t
+
 META.yml                                 Module meta-data (added by MakeMaker)

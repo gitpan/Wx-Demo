@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     21/08/2007
-## RCS-ID:      $Id: wxVScrolledWindow.pm 2203 2007-08-23 19:58:18Z mbarbon $
+## RCS-ID:      $Id: wxVScrolledWindow.pm 2812 2010-02-20 10:53:40Z mbarbon $
 ## Copyright:   (c) 2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -89,7 +89,7 @@ sub OnPaint {
   }
 }
 
-sub add_to_tags  { qw(windows new) }
+sub add_to_tags  { qw(windows) }
 sub title { 'wxVScrolledWindow' }
 
 1;

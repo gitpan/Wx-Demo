@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/08/2006
-## RCS-ID:      $Id: Demo.pm 2417 2008-06-29 19:53:00Z mbarbon $
+## RCS-ID:      $Id: Demo.pm 2871 2010-03-31 08:37:14Z szabgab $
 ## Copyright:   (c) 2006-2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -15,6 +15,55 @@ package Wx::Demo;
 =head1 NAME
 
 Wx::Demo - the wxPerl demo
+
+=head1 DESCRIPTION
+
+Every demo is a module in the Wx::DemoModules::* namespace.
+On startup Wx::Demo collects the lits of Demo Modules, tries to load
+each one of them and displays a list of them based on a categorization
+within the Demo Modules.
+
+You can also locate Demos based on the widget being use or based
+on the event used in the example.
+
+=head2 Demo Modules
+
+Every Demo Module can supply a C<tags> method that should return
+extra deep categorization. It should return a reference to a two element
+array where the first element is the category hierarchy:  maincat/subcat
+and the second element is the title of the given category.
+
+The main categories are hard-coded in the Wx::Demo module
+(new, controls, windows, etc...)
+
+Every module can have an C<add_to_tags> method that should return
+a list of names of the categories the module belongs to so these
+should be strings such as "new", "control", etc... which are 
+main categories or "control/xyz" which is a subcategory definde by
+one of the Demo modules.
+
+If there is no add_to_tags or if it does not return anything
+then the demo can only be found from the list of widgets or events. 
+Currently the reason that some packages might have not add_to_tags method
+is that some of the demos are implemented as several packages in one file.
+In such case only the main package has the add_to_tags method as only that
+needs to be added to the list of demos.
+
+Every module must have a C<title> method that returns its title. 
+As far as I can see, the titles are usually the same as the filename.
+
+
+When one of the Demo Modules is selected in the left pane, the Demo will
+try to execute its C<window> and if it does not exists then the C<new>
+method.
+
+There is also an optional C<file> method in the Demo Modules. I think
+it is used in case there are more than one Demo Packages in the same
+file.
+
+Some of the Demo Modules use L<Wx::DemoModules::lib::BaseModule> as
+a base class.
+
 
 =head1 AUTHOR
 
@@ -33,7 +82,7 @@ use strict;
 use base qw(Wx::Frame Class::Accessor::Fast);
 
 use Wx qw(:textctrl :sizer :window :id);
-use Wx qw(wxDefaultPosition wxDefaultSize
+use Wx qw(wxDefaultPosition wxDefaultSize wxTheClipboard 
           wxDEFAULT_FRAME_STYLE wxNO_FULL_REPAINT_ON_RESIZE wxCLIP_CHILDREN);
 use Wx::Event qw(EVT_TREE_SEL_CHANGED EVT_MENU EVT_CLOSE);
 use File::Slurp;
@@ -42,29 +91,42 @@ use File::Spec;
 use UNIVERSAL::require;
 use Module::Pluggable::Object;
 
-__PACKAGE__->mk_ro_accessors( qw(tree source notebook) );
+use Wx::Demo::Source;
+
+our $VERSION = '0.11';
+
+__PACKAGE__->mk_ro_accessors( qw(tree widget_tree events_tree source notebook left_notebook) );
+__PACKAGE__->mk_accessors( qw(search_term) );
 
 sub new {
     my( $class ) = @_;
     my $self = $class->SUPER::new
-      ( undef, -1, 'wxPerl demo', wxDefaultPosition, [ 600, 500 ],
+      ( undef, -1, 'wxPerl demo', wxDefaultPosition, [ 800, 600 ],
         wxDEFAULT_FRAME_STYLE|wxNO_FULL_REPAINT_ON_RESIZE|wxCLIP_CHILDREN );
 
     # $self->SetLayoutDirection( Wx::wxLayout_RightToLeft() );
     Wx::InitAllImageHandlers();
 
     # create menu bar
-    my $bar = Wx::MenuBar->new;
+    my $bar  = Wx::MenuBar->new;
     my $file = Wx::Menu->new;
-    $file->Append( wxID_EXIT, "E&xit" );
-
     my $help = Wx::Menu->new;
-    $help->Append( wxID_ABOUT, "&About..." );
+    my $edit = Wx::Menu->new;
+
+    $file->Append( wxID_EXIT, '' );
+
+    $help->Append( wxID_ABOUT, '' );
+
+    $edit->Append( wxID_COPY,  '' );
+    $edit->Append( wxID_FIND,  '' );
+    my $find_again = $edit->Append( -1, "Find Again\tF3" );
 
     $bar->Append( $file, "&File" );
+    $bar->Append( $edit, "&Edit" );
     $bar->Append( $help, "&Help" );
 
     $self->SetMenuBar( $bar );
+    $self->{menu_count} = $self->GetMenuBar->GetMenuCount;
 
     # create splitters
     my $split1 = Wx::SplitterWindow->new
@@ -73,7 +135,17 @@ sub new {
     my $split2 = Wx::SplitterWindow->new
       ( $split1, -1, wxDefaultPosition, wxDefaultSize,
         wxNO_FULL_REPAINT_ON_RESIZE|wxCLIP_CHILDREN );
-    my $tree = Wx::TreeCtrl->new( $split1, -1 );
+    my $left_nb = Wx::Notebook->new
+      ( $split1, -1, wxDefaultPosition, wxDefaultSize,
+        wxNO_FULL_REPAINT_ON_RESIZE|wxCLIP_CHILDREN );
+
+    my $tree        = Wx::TreeCtrl->new( $left_nb, -1 );
+    my $widget_tree = Wx::TreeCtrl->new( $left_nb, -1 );
+    my $events_tree = Wx::TreeCtrl->new( $left_nb, -1 );
+    $left_nb->AddPage( $tree,        'Categories', 0 );
+    $left_nb->AddPage( $widget_tree, 'Widgets',    0 );
+    $left_nb->AddPage( $events_tree, 'Events',     0 );
+
     my $text = Wx::TextCtrl->new
       ( $split2, -1, "", wxDefaultPosition, wxDefaultSize,
         wxTE_READONLY|wxTE_MULTILINE|wxNO_FULL_REPAINT_ON_RESIZE );
@@ -87,19 +159,29 @@ sub new {
 
     $nb->AddPage( $code, "Source", 0 );
 
-    $split1->SplitVertically( $tree, $split2, 150 );
+    $split1->SplitVertically( $left_nb, $split2, 250 );
     $split2->SplitHorizontally( $nb, $text, 300 );
 
-    $self->{tree} = $tree;
-    $self->{source} = $code;
-    $self->{notebook} = $nb;
+    $self->{tree}          = $tree;
+    $self->{widget_tree}   = $widget_tree;
+    $self->{events_tree}   = $events_tree;
+    $self->{source}        = $code;
+    $self->{notebook}      = $nb;
+    $self->{left_notebook} = $left_nb;
 
-    EVT_TREE_SEL_CHANGED( $self, $tree, \&on_show_module );
+    EVT_TREE_SEL_CHANGED( $self, $tree,        sub { on_show_module($tree, @_) } );
+    EVT_TREE_SEL_CHANGED( $self, $widget_tree, sub { on_show_module($widget_tree, @_) } );
+    EVT_TREE_SEL_CHANGED( $self, $events_tree, sub { on_show_module($events_tree, @_) } );
     EVT_CLOSE( $self, \&on_close );
+
     EVT_MENU( $self, wxID_ABOUT, \&on_about );
     EVT_MENU( $self, wxID_EXIT, sub { $self->Close } );
+    EVT_MENU( $self, wxID_COPY, \&on_copy );
+    EVT_MENU( $self, wxID_FIND, \&on_find );
+    EVT_MENU( $self, $find_again, \&on_find_again );
 
     $self->populate_modules;
+    $self->populate_widgets;
 
     $self->SetIcon( Wx::GetWxPerlIcon() );
     $self->Show;
@@ -107,6 +189,61 @@ sub new {
     Wx::LogMessage( "Welcome to wxPerl!" );
 
     return $self;
+}
+
+sub on_find {
+    my( $self ) = @_;
+    $self->get_search_term;
+    $self->search;
+
+    return;
+}
+
+sub on_find_again {
+    my( $self ) = @_;
+    if (not $self->search_term) {
+        $self->get_search_term;
+    }
+    $self->search;
+
+    return;
+}
+
+sub get_search_term {
+    my ($self) = @_;
+
+    my $search_term = $self->search_term || '';
+    my $dialog = Wx::TextEntryDialog->new( $self, "", "Search term", $search_term );
+    if ($dialog->ShowModal == wxID_CANCEL) {
+        $dialog->Destroy;
+        return;
+    }   
+    $search_term = $dialog->GetValue;
+    $self->search_term($search_term);
+    $dialog->Destroy;
+    return;
+}
+sub search {
+    my ($self) = @_;
+
+    my $search_term = $self->search_term;
+    return if not $search_term;
+
+    my $code = $self->{source};
+    my ($from, $to) = $code->GetSelection;
+    my $last = $code->isa( 'Wx::TextCtrl' ) ? $code->GetLastPosition()  : $code->GetLength();
+    my $str  = $code->isa( 'Wx::TextCtrl' ) ? $code->GetRange(0, $last) : $code->GetTextRange(0, $last);
+    my $pos = index($str, $search_term, $from+1);
+    if (-1 == $pos) {
+        $pos = index($str, $search_term);
+    }
+    if (-1 == $pos) {
+        return; # not found
+    }
+
+    $code->SetSelection($pos, $pos+length($search_term));
+
+    return;
 }
 
 sub on_close {
@@ -120,15 +257,31 @@ sub on_about {
     my( $self ) = @_;
     use Wx qw(wxOK wxCENTRE wxVERSION_STRING);
 
-    Wx::MessageBox( "wxPerl demo, (c) 2001-2007 Mattia Barbon\n" .
+    Wx::MessageBox( "wxPerl demo version $VERSION, (c) 2001-2010 Mattia Barbon\n" .
                     "wxPerl $Wx::VERSION, " . wxVERSION_STRING,
                     "About wxPerl demo", wxOK|wxCENTRE, $self );
 }
 
-sub on_show_module {
-    my( $self, $event ) = @_;
-    my $module = $self->tree->GetPlData( $event->GetItem );
+# TODO: disallow copy when not the code is in focus
+# or copy the text from the log window too.
+sub on_copy {
+    my( $self ) = @_;
 
+    my $code = $self->{source};
+    my ($from, $to) = $code->GetSelection;
+    my $str = $code->isa( 'Wx::TextCtrl' ) ? $code->GetRange($from, $to) : $code->GetTextRange($from, $to);
+    if (wxTheClipboard->Open()) {
+        wxTheClipboard->SetData( Wx::TextDataObject->new($str) );
+        wxTheClipboard->Close();
+    }
+
+    return;
+}
+
+
+sub on_show_module {
+    my( $tree, $self, $event ) = @_;
+    my $module = $tree->GetPlData( $event->GetItem );
     return unless $module;
 
     $self->show_module( $module );
@@ -151,15 +304,15 @@ sub _add_menus {
     my( $self, %menus ) = @_;
 
     while( my( $title, $menu ) = each %menus ) {
-        $self->GetMenuBar->Insert( 1, $menu, $title );
+        $self->GetMenuBar->Insert( $self->{menu_count}, $menu, $title );
     }
 }
 
 sub _remove_menus {
     my( $self ) = @_;
 
-    while( $self->GetMenuBar->GetMenuCount > 2 ) {
-        $self->GetMenuBar->Remove( 1 )->Destroy;
+    for ($self->{menu_count}+1 .. $self->GetMenuBar->GetMenuCount) {
+        $self->GetMenuBar->Remove( $self->{menu_count} )->Destroy;
     }
 }
 
@@ -246,6 +399,35 @@ sub add_item {
     }
 }
 
+sub populate_widgets {
+    my( $self ) = @_;
+
+    my $widget_tree = $self->widget_tree;
+    my $events_tree = $self->events_tree;
+    my $widgets = $self->widgets;
+
+    my $wt_root_id = $widget_tree->AddRoot( 'wxPerl', -1, -1 );
+    my $et_root_id = $events_tree->AddRoot( 'wxPerl', -1, -1 );
+
+    foreach my $widget (sort keys %$widgets) {
+        if ($widget =~ /^EVT/) {
+            my $parent_id = $events_tree->AppendItem( $et_root_id, $widget, -1, -1 );
+            foreach my $name (sort keys %{ $widgets->{$widget} }) {
+                my $id = $events_tree->AppendItem( $parent_id, $name, -1, -1, Wx::TreeItemData->new($name) );
+            }
+        } else {
+            my $parent_id = $widget_tree->AppendItem( $wt_root_id, $widget, -1, -1 );
+            foreach my $name (sort keys %{ $widgets->{$widget} }) {
+                my $id = $widget_tree->AppendItem( $parent_id, $name, -1, -1, Wx::TreeItemData->new($name) );
+            }
+        }
+    }
+
+    $widget_tree->Expand( $wt_root_id );
+    $events_tree->Expand( $et_root_id );
+    return;
+}
+
 sub populate_modules {
     my( $self ) = @_;
     my $tree = $self->tree;
@@ -287,15 +469,25 @@ sub plugins {
     my( $self ) = @_;
     return @{$self->{plugins}} if $self->{plugins};
 
-    $self->{plugins} = [ $self->load_plugins ];
+    ($self->{plugins}, $self->{widgets}) = $self->load_plugins(sub { Wx::LogWarning( @_ ) });
 
     return @{$self->{plugins}};
 }
 
+sub widgets {
+    my( $self ) = @_;
+    if (not $self->{widgets}) {
+        $self->plugins;
+    }
+
+    return $self->{widgets};
+}
+
 # allow ignoring load failures
 sub load_plugins {
-    my( $self ) = @_;
+    my( $self , $w ) = @_;
     my %skip;
+    my %widgets;
     my $finder = Module::Pluggable::Object->new
       ( search_path => [ qw(Wx::DemoModules) ],
         require     => 0,
@@ -304,10 +496,12 @@ sub load_plugins {
 
     foreach my $package ( $finder->plugins ) {
         next if $skip{$package};
-        unless( $package->require ) {
-            Wx::LogWarning( "Skipping module '%s'", $package );
-            Wx::LogWarning( $_ ) foreach split /\n/, $@;
-            my $f = "$package.pm"; $f =~ s{::}{/}g;
+        my $f = "$package.pm"; $f =~ s{::}{/}g;
+        if( $package->require ) {
+            $self->parse_file($package, $f, $w, \%widgets);
+        } else {
+            $w->( "Skipping module '%s'", $package );
+            $w->( $_ ) foreach split /\n/, $@;
 #            delete $INC{$f}; # for Perl 5.10
 #            $INC{$f} = 'skip it';
             $INC{$f} = 'skip it' unless exists $INC{$f};
@@ -315,12 +509,37 @@ sub load_plugins {
         };
     }
 
-    # search inner packages
-    return grep !$skip{$_}, Module::Pluggable::Object->new
+    # search inner packages (needed as there some files with multiple packages inside)
+    my @plugins = grep !$skip{$_}, Module::Pluggable::Object->new
       ( search_path => [ qw(Wx::DemoModules) ],
         require     => 1,
         filename    => __FILE__,
         )->plugins;
+    return (\@plugins, \%widgets);
+}
+
+sub parse_file {
+    my ($self, $package, $path, $w, $widgets) = @_;
+    
+    if (open my $fh, '<', $INC{$path}) {
+        while (my $line = <$fh>) {
+            for ($line =~ /\b(Wx(::\w+)+)\b/g) {
+                my $name = $1;
+                next if $name =~ /^Wx::DemoModules/;
+                $widgets->{$name}{$package} = 1;
+            }
+            for ($line =~ /\b(wx\w+)\b/g) {
+                $widgets->{$1}{$package} = 1;
+            }
+            for ($line =~ /\b(EVT_\w+)\b/g) {
+                $widgets->{$1}{$package} = 1;
+            }
+        }
+    } else {
+        $w->("Could not open $INC{$path} for $path $!");
+    }
+
+    return;
 }
 
 sub get_data_file {
@@ -335,92 +554,5 @@ sub get_data_file {
     return File::Spec->catdir( $dir, 'files', $file );
 }
 
-package Wx::Demo::Source;
-
-use strict;
-
-use Wx qw(:stc :textctrl :font wxDefaultPosition wxDefaultSize
-          wxNO_FULL_REPAINT_ON_RESIZE wxLayout_LeftToRight);
-
-our @ISA = ( eval 'require Wx::STC' ) ? 'Wx::StyledTextCtrl' : 'Wx::TextCtrl';
-
-sub new {
-    my( $class, $parent ) = @_;
-    my $self;
-
-    if( $class->isa( 'Wx::TextCtrl' ) ) {
-        $self = $class->SUPER::new
-          ( $parent, -1, '', wxDefaultPosition, wxDefaultSize,
-            wxTE_READONLY|wxTE_MULTILINE|wxNO_FULL_REPAINT_ON_RESIZE );
-    } else {
-        $self = $class->SUPER::new( $parent, -1, [-1, -1], [300, 300] );
-        my $font = Wx::Font->new( 10, wxTELETYPE, wxNORMAL, wxNORMAL );
-
-        $self->SetFont( $font );
-        $self->StyleSetFont( wxSTC_STYLE_DEFAULT, $font );
-        $self->StyleClearAll();
-
-        $self->StyleSetForeground(0, Wx::Colour->new(0x00, 0x00, 0x7f));
-        $self->StyleSetForeground(1,  Wx::Colour->new(0xff, 0x00, 0x00));
-
-        # 2 Comment line green
-        $self->StyleSetForeground(2,  Wx::Colour->new(0x00, 0x7f, 0x00));
-        $self->StyleSetForeground(3,  Wx::Colour->new(0x7f, 0x7f, 0x7f));
-
-        # 4 numbers
-        $self->StyleSetForeground(4,  Wx::Colour->new(0x00, 0x7f, 0x7f));
-        $self->StyleSetForeground(5,  Wx::Colour->new(0x00, 0x00, 0x7f));
-
-        # 6 string orange
-        $self->StyleSetForeground(6,  Wx::Colour->new(0xff, 0x7f, 0x00));
-
-        $self->StyleSetForeground(7,  Wx::Colour->new(0x7f, 0x00, 0x7f));
-
-        $self->StyleSetForeground(8,  Wx::Colour->new(0x00, 0x00, 0x00));
-
-        $self->StyleSetForeground(9,  Wx::Colour->new(0x7f, 0x7f, 0x7f));
-
-        # 10 operators dark blue
-        $self->StyleSetForeground(10, Wx::Colour->new(0x00, 0x00, 0x7f));
-
-        # 11 identifiers bright blue
-        $self->StyleSetForeground(11, Wx::Colour->new(0x00, 0x00, 0xff));
-
-        # 12 scalars purple
-        $self->StyleSetForeground(12, Wx::Colour->new(0x7f, 0x00, 0x7f));
-
-        # 13 array light blue
-        $self->StyleSetForeground(13, Wx::Colour->new(0x40, 0x80, 0xff));
-
-        # 17 matching regex red
-        $self->StyleSetForeground(17, Wx::Colour->new(0xff, 0x00, 0x7f));
-
-        # 18 substitution regex light olive
-        $self->StyleSetForeground(18, Wx::Colour->new(0x7f, 0x7f, 0x00));
-
-        #Set a style 12 bold
-        $self->StyleSetBold(12,  1);
-
-        # Apply tag style for selected lexer (blue)
-        $self->StyleSetSpec( wxSTC_H_TAG, "fore:#0000ff" );
-
-        $self->SetLexer( wxSTC_LEX_PERL );
-    }
-
-    $self->SetLayoutDirection( wxLayout_LeftToRight )
-      if $self->can( 'SetLayoutDirection' );
-
-    return $self;
-}
-
-sub set_source {
-    my( $self ) = @_;
-
-    if( $self->isa( 'Wx::TextCtrl' ) ) {
-        $self->SetValue( $_[1] );
-    } else {
-        $self->SetText( $_[1] );
-    }
-}
 
 1;

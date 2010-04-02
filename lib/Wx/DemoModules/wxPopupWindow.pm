@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     25/09/2006
-## RCS-ID:      $Id: wxPopupWindow.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxPopupWindow.pm 2772 2010-02-01 14:23:16Z mdootson $
 ## Copyright:   (c) 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -24,14 +24,19 @@ sub new {
     my( $class, $parent ) = @_;
     my $self = $class->SUPER::new( $parent );
 
-    my $popup = Wx::Button->new( $self, -1, 'Popup', [ 100, 10 ] );
-    my $popdown = Wx::Button->new( $self, -1, 'Popdown', [ 100, 40 ] );
-    my $poptransient = Wx::Button->new( $self, -1, 'Popup Transient',
-                                        [ 100, 70 ] );
+    my $popup        = Wx::Button->new( $self, -1, 'Popup',     [ 100, 10 ] );
+    my $popdown      = Wx::Button->new( $self, -1, 'Popdown',   [ 100, 40 ] );
+    
 
     EVT_BUTTON( $self, $popup, \&on_popup );
     EVT_BUTTON( $self, $popdown, \&on_popdown );
-    EVT_BUTTON( $self, $poptransient, \&on_poptransient );
+    
+    unless( Wx::wxMAC() ) {
+        # not implemented on Mac
+        my $poptransient = Wx::Button->new( $self, -1, 'Transient', [ 100, 70 ] );
+        EVT_BUTTON( $self, $poptransient, \&on_poptransient );
+    }
+    
 
     return $self;
 }

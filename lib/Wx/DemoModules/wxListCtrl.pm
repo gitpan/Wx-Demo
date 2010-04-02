@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     12/09/2001
-## RCS-ID:      $Id: wxListCtrl.pm 2322 2008-01-19 12:58:05Z mbarbon $
+## RCS-ID:      $Id: wxListCtrl.pm 2468 2008-09-08 20:55:33Z szabgab $
 ## Copyright:   (c) 2001, 2003-2004, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -14,6 +14,7 @@ package Wx::DemoModules::wxListCtrl;
 
 use strict;
 use Wx::DemoModules::lib::Utility;
+use base qw(Wx::ListCtrl);
 
 use Wx qw(:icon wxTheApp :listctrl);
 use Wx::Event
@@ -24,6 +25,14 @@ use Wx::Event
      EVT_LIST_ITEM_ACTIVATED EVT_LIST_COL_CLICK EVT_CHAR
      EVT_MENU
      );
+
+sub new {
+    my $class = shift;
+    my $self = $class->SUPER::new(@_);
+    $self->create_menu;
+
+    return $self;
+}
 
 sub create_image_lists {
     my $images_sm = Wx::ImageList->new( 16, 16, 1 );
@@ -79,6 +88,8 @@ sub create_menu {
     EVT_MENU( $top, $menu->Append( -1, "Delete all items" ),
               sub { $listctrl->on_delete_all } );
     $listctrl->{menu} = [ '&List Control', $menu ];
+
+    return;
 }
 
 sub menu { @{$_[0]->{menu}} }

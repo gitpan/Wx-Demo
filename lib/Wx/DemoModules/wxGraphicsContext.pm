@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     07/10/2007
-## RCS-ID:      $Id: wxGraphicsContext.pm 2236 2007-10-07 17:52:47Z mbarbon $
+## RCS-ID:      $Id: wxGraphicsContext.pm 2812 2010-02-20 10:53:40Z mbarbon $
 ## Copyright:   (c) 2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -54,7 +54,7 @@ sub _on_paint {
     $cxt->DrawText( "At half pixel, rotated", 60.5, 60.5, -3.141/8*3 );
 }
 
-sub add_to_tags  { qw(misc new) }
+sub add_to_tags  { qw(misc) }
 sub title { 'wxGraphicsContext' }
 
 defined &Wx::GraphicsContext::Create;

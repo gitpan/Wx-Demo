@@ -5,7 +5,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     14/08/2006
-## RCS-ID:      $Id: Makefile.PL 2211 2007-08-24 20:17:38Z mbarbon $
+## RCS-ID:      $Id: Makefile.PL 2869 2010-03-31 08:23:13Z szabgab $
 ## Copyright:   (c) 2006-2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -26,7 +26,7 @@ eval {
 
 WriteMakefile
   ( NAME            => 'Wx::Demo',
-    VERSION_FROM    => 'bin/wxperl_demo.pl',
+    VERSION_FROM    => 'lib/Wx/Demo.pm',
     PREREQ_PM       => { 'File::Spec'              => 0.8,
                          'Wx'                      => 0.64,
                          'Module::Pluggable'       => 3.1,

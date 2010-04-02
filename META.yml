@@ -1,7 +1,7 @@
 # http://module-build.sourceforge.net/META-spec.html
 name:         Wx-Demo
-version:      0.10
-version_from: bin/wxperl_demo.pl
+version:      0.11
+version_from: lib/Wx/Demo.pm
 installdirs:  site
 author:       Mattia Barbon <mbarbon@cpan.org>
 abstract:     the wxPerl demo
@@ -21,7 +21,7 @@ no_index:
     - t
 
 distribution_type: module
-generated_by: ExtUtils::MY_Metafile version 0.09, EUMM-6.44.
+generated_by: ExtUtils::MY_Metafile version 0.09, EUMM-6.56.
 meta-spec:
   version: 1.3
   url: http://module-build.sourceforge.net/META-spec-v1.3.html
