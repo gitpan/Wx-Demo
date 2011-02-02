@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     21/08/2007
-## RCS-ID:      $Id: wxHVScrolledWindow.pm 2854 2010-03-22 18:18:37Z mdootson $
+## RCS-ID:      $Id: wxHVScrolledWindow.pm 2920 2010-04-29 21:11:27Z mbarbon $
 ## Copyright:   (c) 2007 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -16,7 +16,7 @@ use strict;
 use Wx qw(wxWHITE wxHORIZONTAL wxVERTICAL);
 use Wx::Event qw(EVT_PAINT);
 
-use base (Wx::wxVERSION() > 2.0089 ) ? qw(Wx::PlHVScrolledWindow) : qw( Wx::Window );
+use base (Wx::wxVERSION() >= 2.009 ) ? qw(Wx::PlHVScrolledWindow) : qw( Wx::Window );
 # Wx::HVScrolledWindow is for wxWidgets 2.9.0
 # Simply won't be loaded on lower Wx::Widgets (see sub add_to_tags )
 
@@ -76,7 +76,7 @@ sub OnPaint {
   }
 }
 
-sub add_to_tags  { ( Wx::wxVERSION() > 2.0089 ) ? qw(windows) : () }
+sub add_to_tags  { ( Wx::wxVERSION() >= 2.009 ) ? qw(windows) : () }
 sub title { 'wxHVScrolledWindow' }
 
 1;

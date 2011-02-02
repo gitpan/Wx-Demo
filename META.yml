@@ -1,27 +1,35 @@
-# http://module-build.sourceforge.net/META-spec.html
-name:         Wx-Demo
-version:      0.11
-version_from: lib/Wx/Demo.pm
-installdirs:  site
-author:       Mattia Barbon <mbarbon@cpan.org>
-abstract:     the wxPerl demo
-license:      perl
+--- #YAML:1.0
+name:               Wx-Demo
+version:            0.12
+abstract:           the wxPerl demo
+author:
+    - Mattia Barbon <mbarbon@cpan.org>
+license:            unknown
+distribution_type:  module
+configure_requires:
+    ExtUtils::MakeMaker:  0
+build_requires:
+    ExtUtils::MakeMaker:  0
 requires:
-  Class::Accessor::Fast:  0.2
-  File::chdir:           0.06
-  File::Slurp:           0.01
-  File::Spec:             0.8
-  IO::Scalar:               2
-  Module::Pluggable:      3.1
-  UNIVERSAL::require:     0.1
-  Wx:                    0.64
-#build_requires:
+    Class::Accessor::Fast:  0.2
+    File::chdir:          0.06
+    File::Slurp:          0.01
+    File::Spec:           0.8
+    IO::Scalar:           2
+    Module::Pluggable:    3.1
+    UNIVERSAL::require:   0.1
+    Wx:                   0.64
+resources:
+    homepage:     http://wxperl.sourceforge.net/
+    license:      perl
+    MailingList:  wxperl-users@perl.org
+    repository:   https://wxperl.svn.sourceforge.net/svnroot/wxperl/wxDemo/trunk
 no_index:
-  directory:
-    - t
-
-distribution_type: module
-generated_by: ExtUtils::MY_Metafile version 0.09, EUMM-6.56.
+    directory:
+        - t
+        - inc
+        - lib/Wx/DemoModules/files/
+generated_by:       ExtUtils::MakeMaker version 6.56
 meta-spec:
-  version: 1.3
-  url: http://module-build.sourceforge.net/META-spec-v1.3.html
+    url:      http://module-build.sourceforge.net/META-spec-v1.4.html
+    version:  1.4
