@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     01/10/2006
-## RCS-ID:      $Id: wxBookCtrl.pm 2478 2008-09-09 15:03:18Z szabgab $
+## RCS-ID:      $Id: wxBookCtrl.pm 3043 2011-03-21 17:25:36Z mdootson $
 ## Copyright:   (c) 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -25,6 +25,8 @@ use base qw(Wx::DemoModules::lib::BaseModule Class::Accessor::Fast);
 use Wx qw(:bookctrl wxNOT_FOUND wxYES_NO wxYES wxICON_QUESTION);
 
 __PACKAGE__->mk_accessors( qw(bookctrl) );
+
+sub expandinsizer { 1 };
 
 sub styles {
     my( $self ) = @_;

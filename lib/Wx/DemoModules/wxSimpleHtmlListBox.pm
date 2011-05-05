@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     01/11/2006
-## RCS-ID:      $Id: wxSimpleHtmlListBox.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxSimpleHtmlListBox.pm 3043 2011-03-21 17:25:36Z mdootson $
 ## Copyright:   (c) 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -21,6 +21,8 @@ use Wx qw(:htmllistbox wxNOT_FOUND);
 use Wx::Event qw(EVT_LISTBOX EVT_LISTBOX_DCLICK);
 
 __PACKAGE__->mk_accessors( qw(listbox) );
+
+sub expandinsizer { 1 };
 
 sub styles {
     my( $self ) = @_;

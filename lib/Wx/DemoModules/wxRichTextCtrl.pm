@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     11/11/2006
-## RCS-ID:      $Id: wxRichTextCtrl.pm 2886 2010-04-13 16:13:05Z mdootson $
+## RCS-ID:      $Id: wxRichTextCtrl.pm 3043 2011-03-21 17:25:36Z mdootson $
 ## Copyright:   (c) 2006, 2010 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -26,6 +26,8 @@ sub DESTROY {
 
     $self->stylesheet( undef );
 }
+
+sub expandinsizer { 1 };
 
 sub commands {
     my( $self ) = @_;
