@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/08/2006
-## RCS-ID:      $Id: Demo.pm 3058 2011-05-05 07:12:04Z mdootson $
+## RCS-ID:      $Id: Demo.pm 3082 2011-07-04 16:40:16Z mdootson $
 ## Copyright:   (c) 2006-2011 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -93,7 +93,7 @@ use Module::Pluggable::Object;
 
 use Wx::Demo::Source;
 
-our $VERSION = '0.13';
+our $VERSION = '0.14';
 
 __PACKAGE__->mk_ro_accessors( qw(tree widget_tree events_tree source notebook left_notebook) );
 __PACKAGE__->mk_accessors( qw(search_term) );
@@ -262,7 +262,7 @@ sub on_about {
     my( $self ) = @_;
     use Wx qw(wxOK wxCENTRE wxVERSION_STRING);
 
-    Wx::MessageBox( "wxPerl demo version $VERSION, (c) 2001-2010 Mattia Barbon\n" .
+    Wx::MessageBox( "wxPerl demo version $VERSION, (c) 2001-2011 Mattia Barbon\n" .
                     "wxPerl $Wx::VERSION, " . wxVERSION_STRING,
                     "About wxPerl demo", wxOK|wxCENTRE, $self );
 }

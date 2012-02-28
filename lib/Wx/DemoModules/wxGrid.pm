@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     08/12/2001
-## RCS-ID:      $Id: wxGrid.pm 2378 2008-04-26 04:21:45Z mdootson $
+## RCS-ID:      $Id: wxGrid.pm 3118 2011-11-18 09:58:12Z mdootson $
 ## Copyright:   (c) 2001, 2003, 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -20,7 +20,10 @@ use Wx::Event qw(EVT_GRID_CELL_LEFT_CLICK EVT_GRID_CELL_RIGHT_CLICK
     EVT_GRID_LABEL_LEFT_CLICK EVT_GRID_LABEL_RIGHT_CLICK
     EVT_GRID_LABEL_LEFT_DCLICK EVT_GRID_LABEL_RIGHT_DCLICK
     EVT_GRID_ROW_SIZE EVT_GRID_COL_SIZE EVT_GRID_RANGE_SELECT
-    EVT_GRID_CELL_CHANGE EVT_GRID_SELECT_CELL);
+    EVT_GRID_SELECT_CELL);
+    
+# events changed names in version 2.9.x
+my $events29plus = ( defined(&Wx::Event::EVT_GRID_CELL_CHANGED) );
 
 use Wx qw(wxRED wxBLUE wxGREEN);
 
@@ -74,7 +77,11 @@ sub new {
                            $_[0]->ShowSelections;
                            $_[1]->Skip;
                          } );
-  EVT_GRID_CELL_CHANGE( $this, c_log_skip( "Cell content changed" ) );
+  if( $events29plus ) {
+      Wx::Event::EVT_GRID_CELL_CHANGED( $this, c_log_skip( "Cell content changed" ) );
+  } else {
+      Wx::Event::EVT_GRID_CELL_CHANGE( $this, c_log_skip( "Cell content changed" ) );
+  }
   EVT_GRID_SELECT_CELL( $this, c_log_skip( "Cell select" ) );
 
   return $this;

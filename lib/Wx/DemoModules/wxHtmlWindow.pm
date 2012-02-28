@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     12/09/2001
-## RCS-ID:      $Id: wxHtmlWindow.pm 2812 2010-02-20 10:53:40Z mbarbon $
+## RCS-ID:      $Id: wxHtmlWindow.pm 3120 2011-11-18 18:50:54Z mdootson $
 ## Copyright:   (c) 2001, 2004, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -34,14 +34,15 @@ sub new {
   my $back = Wx::Button->new( $this, -1, 'Back' );
   my $preview = Wx::Button->new( $this, -1, 'Preview' );
   my $pages = Wx::Button->new( $this, -1, 'Page Setup' );
-  my $prints = Wx::Button->new( $this, -1, 'Printer Setup' );
+  
+  # my $prints = Wx::Button->new( $this, -1, 'Printer Setup' );
 
   $but_s->Add( $back );
   $but_s->Add( $forward );
   $but_s->Add( $preview );
   $but_s->Add( $print );
   $but_s->Add( $pages );
-  $but_s->Add( $prints );
+  # $but_s->Add( $prints );
 
   $top_s->Add( $html, 1, wxGROW|wxALL, 5 );
   $top_s->Add( $but_s, 0, wxALL, 5 );
@@ -54,7 +55,8 @@ sub new {
   EVT_BUTTON( $this, $forward, \&OnForward );
   EVT_BUTTON( $this, $back, \&OnBack );
   EVT_BUTTON( $this, $pages, \&OnPageSetup );
-  EVT_BUTTON( $this, $prints, \&OnPrinterSetup );
+  
+  #  EVT_BUTTON( $this, $prints, \&OnPrinterSetup );
 
   $this->{PRINTER} = Wx::HtmlEasyPrinting->new( 'wxPerl demo' );
 
@@ -76,11 +78,11 @@ sub OnPageSetup {
   $this->printer->PageSetup();
 }
 
-sub OnPrinterSetup {
-  my $this = shift;
-
-  $this->printer->PrinterSetup();
-}
+#sub OnPrinterSetup {
+#  my $this = shift;
+#
+#  $this->printer->PrinterSetup();
+#}
 
 sub OnPreview {
   my( $this, $event ) = @_;

@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/12/2003
-## RCS-ID:      $Id: wxHtmlTag.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxHtmlTag.pm 3120 2011-11-18 18:50:54Z mdootson $
 ## Copyright:   (c) 2003-2004, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -58,8 +58,8 @@ sub new {
   <h1>Heading</h1>
 
   <wxperlctrl />
-
-Some text
+<br/><br/>
+Calendar Control using custom tag.
 </body>
 </html>
 EOT

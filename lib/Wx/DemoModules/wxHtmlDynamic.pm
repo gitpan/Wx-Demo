@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     18/04/2002
-## RCS-ID:      $Id: wxHtmlDynamic.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxHtmlDynamic.pm 3129 2011-11-21 22:07:47Z mdootson $
 ## Copyright:   (c) 2002, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -91,8 +91,23 @@ $text
 </html>
 EOT
 
-  my $f = Wx::PlFSFile->new( IO::Scalar->new( \$string ),
-                             $location, 'text/html', '' );
+  my $mimetype = 'text/html';
+  my $fh = IO::Scalar->new( \$string );
+  
+  # we could also pass a charset as part of
+  # the mimetype and use IO::String or open
+  
+  # my $mimetype = 'text/html; charset=utf-8';
+  # my $fh = IO::String->new( $string );
+  # open my $fh, '<', \$string;
+  
+  # If our mimetype is 'text/html'  and we use some other tied method, 
+  # it must implement $fh->sref that returns a reference to the 
+  # underlying scalar OR we must pass a charset as part of the mimetype.
+  # This is because of the way the HTMLParser requests the size of the 
+  # input 'file' if no charset is given.
+  
+  my $f = Wx::PlFSFile->new( $fh, $location, $mimetype, '' );
   return $f;
 }
 

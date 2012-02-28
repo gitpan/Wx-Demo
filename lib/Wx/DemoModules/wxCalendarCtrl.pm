@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     11/10/2002
-## RCS-ID:      $Id: wxCalendarCtrl.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxCalendarCtrl.pm 3118 2011-11-18 09:58:12Z mdootson $
 ## Copyright:   (c) 2002-2003, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -35,8 +35,9 @@ sub new {
 
   $sizer->Add( $calendar, 0, wxALL, 10 );
   $sizer->Add( $textctrl, 0, wxGROW|wxALL, 10 );
-
-  $calendar->EnableYearChange;
+  
+  # EnableYearChange not available on native controls
+  $calendar->EnableYearChange if $calendar->can('EnableYearChange');
   $calendar->EnableMonthChange;
 
   # test attributes

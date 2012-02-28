@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     13/08/2006
-## RCS-ID:      $Id: wxStaticBitmap.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxStaticBitmap.pm 3118 2011-11-18 09:58:12Z mdootson $
 ## Copyright:   (c) 2000, 2003, 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -49,10 +49,7 @@ sub on_clear_bitmap {
 
 sub on_set_bitmap {
     my( $self ) = @_;
-
-    $self->staticbitmap->SetBitmap
-      ( wxTheApp->GetStdIcon( rand > .5 ? wxICON_QUESTION :
-                                          wxICON_INFORMATION ) );
+    $self->staticbitmap->SetBitmap(Wx::Bitmap->new( wxTheApp->GetStdIcon( rand > .5 ? wxICON_QUESTION : wxICON_INFORMATION ) ) );
     $self->staticbitmap->Refresh;
 }
 
