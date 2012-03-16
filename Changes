@@ -1,5 +1,10 @@
 Revision history for Perl application Wx::Demo.
 
+0.15  Fri Mar 16 2012
+    - Added wxTreeListCtrl
+    - Added wxRibbonControl
+    - Added wxPropertyGrid
+
 0.14  Tue Feb 28 2012
     - Fix wxOverlay font on MSW + mingw + gdiplus
     - Add wxDF_UNICODETEXT handling in wxClipboard demo
