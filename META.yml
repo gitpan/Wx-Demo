@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Wx-Demo
-version:            0.15
+version:            0.16
 abstract:           the wxPerl demo
 author:
     - Mattia Barbon <mbarbon@cpan.org>

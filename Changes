@@ -1,5 +1,13 @@
 Revision history for Perl application Wx::Demo.
 
+0.16  Tue Mar 27 2012
+    - Prettier load fail for modules not supported by host Wx / wxWidgets 
+    - Added wxWebView
+    - Added wxTimePickerCtrl
+    - Added wxRichToolTip
+    - Added wxBannerWindow
+    - Added wxInfoBar ( minimally )
+
 0.15  Fri Mar 16 2012
     - Added wxTreeListCtrl
     - Added wxRibbonControl

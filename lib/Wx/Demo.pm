@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/08/2006
-## RCS-ID:      $Id: Demo.pm 3154 2012-02-28 14:49:00Z mdootson $
+## RCS-ID:      $Id: Demo.pm 3247 2012-03-26 18:03:40Z mdootson $
 ## Copyright:   (c) 2006-2011 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -93,15 +93,16 @@ use Module::Pluggable::Object;
 
 use Wx::Demo::Source;
 
-our $VERSION = '0.15';
+our $VERSION = '0.16';
 
-__PACKAGE__->mk_ro_accessors( qw(tree widget_tree events_tree source notebook left_notebook) );
-__PACKAGE__->mk_accessors( qw(search_term) );
+__PACKAGE__->mk_ro_accessors( qw(tree widget_tree events_tree source notebook left_notebook failwidgets) );
+__PACKAGE__->mk_accessors( qw(search_term ) );
 
-if( Wx::wxMAC()) {
-    Wx::SystemOptions::SetOptionInt('window-default-variant', wxWINDOW_VARIANT_SMALL);
+#if( Wx::wxMAC()) {
+    #Modern Mac defaults look better than our settings
+    #Wx::SystemOptions::SetOptionInt('window-default-variant', wxWINDOW_VARIANT_SMALL);
     #Wx::SystemOptions::SetOptionInt('mac.listctrl.always_use_generic', 1);
-}
+#}
 
 sub new {
     my( $class ) = @_;
@@ -173,6 +174,7 @@ sub new {
     $self->{source}        = $code;
     $self->{notebook}      = $nb;
     $self->{left_notebook} = $left_nb;
+    $self->{failwidgets}   = [];
 
     EVT_TREE_SEL_CHANGED( $self, $tree,        sub { on_show_module($tree, @_) } );
     EVT_TREE_SEL_CHANGED( $self, $widget_tree, sub { on_show_module($widget_tree, @_) } );
@@ -466,6 +468,27 @@ sub populate_modules {
             add_item( $tree, $parent_id, $module );
         }
     }
+    
+    if( @{ $self->failwidgets } ) {
+    	my $id = $tree->AppendItem( $root_id, 'Not Loaded', -1, -1 );
+		$tag_map{fail} = $id;
+	}
+    
+    foreach my $module ( grep $_->can( 'add_to_tags' ), @{ $self->failwidgets } ) {
+	    foreach my $tag ( $module->add_to_tags ) {
+			my $parent_id = $tag_map{$tag};
+
+			unless( $parent_id ) {
+				Wx::LogWarning( 'Wrong parent: %s', $tag );
+				next;
+			}
+
+			add_item( $tree, $parent_id, $module );
+		}
+    }
+    
+    
+    
 
     $tree->Expand( $root_id );
 }
@@ -493,6 +516,27 @@ sub load_plugins {
     my( $self , $w ) = @_;
     my %skip;
     my %widgets;
+    
+    # allow modules to provide a hint module and
+    # rplacement info module if they
+    # should not be loaded
+    my $hintfinder = Module::Pluggable::Object->new
+	    ( search_path => [ qw(Wx::DemoHints) ],
+	        require     => 0,
+	        filename    => __FILE__,
+        );
+    
+    my %hashints = map { 'Wx::DemoModules::' . (split(/::/, $_))[-1] => $_ } $hintfinder->plugins;
+    
+    # load the core hints
+    my %corehints;
+    require Wx::DemoHints::CoreHints;
+    for my $hint ( Wx::DemoHints::CoreHints->hint_packages ) {
+    	my $module = $hint;
+    	$module =~ s/DemoHints/DemoModules/;
+    	$corehints{$module} = $hint;
+    }
+        
     my $finder = Module::Pluggable::Object->new
       ( search_path => [ qw(Wx::DemoModules) ],
         require     => 0,
@@ -502,6 +546,27 @@ sub load_plugins {
     foreach my $package ( $finder->plugins ) {
         next if $skip{$package};
         my $f = "$package.pm"; $f =~ s{::}{/}g;
+        
+        # use file and core hints to avoid loading packages
+        
+        if( $hashints{$package} ) {
+            if($hashints{$package}->require && !$hashints{$package}->can_load ) {
+           		
+           		push( @{ $self->{failwidgets} }, $hashints{$package} );
+            	# and skip
+            	$skip{$package} = 1;
+            	next;
+            }
+        } elsif( $corehints{$package} ) {
+			unless( $corehints{$package}->can_load ) {
+
+				push( @{ $self->{failwidgets} }, $corehints{$package} );
+				# and skip
+				$skip{$package} = 1;
+				next;
+			}
+        }
+        
         if( $package->require ) {
             $self->parse_file($package, $f, $w, \%widgets);
         } else {
@@ -515,10 +580,11 @@ sub load_plugins {
     }
 
     # search inner packages (needed as there some files with multiple packages inside)
-    my @plugins = grep !$skip{$_}, Module::Pluggable::Object->new
+    my @plugins = Module::Pluggable::Object->new
       ( search_path => [ qw(Wx::DemoModules) ],
         require     => 1,
         filename    => __FILE__,
+        except      => [ ( keys (%skip) ) ],
         )->plugins;
     return (\@plugins, \%widgets);
 }
