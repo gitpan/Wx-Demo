@@ -3,7 +3,7 @@
 ## Purpose:     wxPerl demo hint helper for Wx::BannerWindow
 ## Author:      Mark Dootson
 ## Created:     26/03/2012
-## RCS-ID:      $Id: CoreHints.pm 3260 2012-03-27 10:50:32Z mdootson $
+## RCS-ID:      $Id: CoreHints.pm 3305 2012-05-31 02:21:59Z mdootson $
 ## Copyright:   (c) 2012 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -227,6 +227,15 @@ sub can_load { local $@; eval { require Wx::Media }; defined &Wx::MediaCtrl::new
 sub title { 'wxMediaCtrl' }
 sub hint_message { 'Your wxWidgets was not compiled with wxMediaCtrl support'; }
 __PACKAGE__->register_hint;
+
+#---------------------------------------------------------------------------
+package
+	Wx::DemoHints::wxPrintPaperDatabase;
+use base qw( Wx::DemoHints::CoreHintBase );
+__PACKAGE__->register_hint;
+sub can_load { require Wx::Print; return defined(&Wx::PrintPaperDatabase::FindPaperTypeById); }
+sub title { 'wxPrintPaperDatabase' }
+sub hint_message { 'wxPrintPaperDatabase requires Wx >= 0.9909'; }
 
 
 

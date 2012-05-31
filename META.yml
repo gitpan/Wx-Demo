@@ -1,6 +1,6 @@
 --- #YAML:1.0
 name:               Wx-Demo
-version:            0.16
+version:            0.17
 abstract:           the wxPerl demo
 author:
     - Mattia Barbon <mbarbon@cpan.org>
@@ -29,7 +29,7 @@ no_index:
         - t
         - inc
         - lib/Wx/DemoModules/files/
-generated_by:       ExtUtils::MakeMaker version 6.57_05
+generated_by:       ExtUtils::MakeMaker version 6.56
 meta-spec:
     url:      http://module-build.sourceforge.net/META-spec-v1.4.html
     version:  1.4
