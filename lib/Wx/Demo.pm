@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/08/2006
-## RCS-ID:      $Id: Demo.pm 3299 2012-05-22 19:54:06Z mdootson $
+## RCS-ID:      $Id: Demo.pm 3308 2012-05-31 02:30:15Z mdootson $
 ## Copyright:   (c) 2006-2011 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -93,7 +93,7 @@ use Module::Pluggable::Object;
 
 use Wx::Demo::Source;
 
-our $VERSION = '0.17';
+our $VERSION = '0.18';
 
 __PACKAGE__->mk_ro_accessors( qw(tree widget_tree events_tree source notebook left_notebook failwidgets) );
 __PACKAGE__->mk_accessors( qw(search_term ) );

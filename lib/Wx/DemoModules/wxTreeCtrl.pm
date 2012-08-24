@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     17/02/2001
-## RCS-ID:      $Id: wxTreeCtrl.pm 2189 2007-08-21 18:15:31Z mbarbon $
+## RCS-ID:      $Id: wxTreeCtrl.pm 3324 2012-08-09 01:21:55Z mdootson $
 ## Copyright:   (c) 2001, 2004, 2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -15,9 +15,12 @@ package Wx::DemoModules::wxTreeCtrl;
 use strict;
 use base qw(Wx::TreeCtrl);
 
-use Wx qw(:treectrl :window wxDefaultPosition wxDefaultSize);
+use Wx qw(:treectrl :window wxDefaultPosition wxDefaultSize 
+          wxMOD_ALT wxMOD_SHIFT wxMOD_META wxMOD_CONTROL);
 use Wx::Event qw(EVT_TREE_BEGIN_DRAG EVT_TREE_END_DRAG
-                 EVT_TREE_SEL_CHANGED EVT_MENU);
+                 EVT_TREE_SEL_CHANGED EVT_MENU
+                 EVT_TREE_KEY_DOWN);
+
 use Wx::DemoModules::lib::Utility;
 
 sub new {
@@ -38,6 +41,7 @@ sub new {
     EVT_TREE_BEGIN_DRAG( $self, $self, \&OnBeginDrag );
     EVT_TREE_END_DRAG( $self, $self, \&OnEndDrag );
     EVT_TREE_SEL_CHANGED( $self, $self, \&OnSelChange );
+    EVT_TREE_KEY_DOWN( $self, $self, \&OnTreeKeyDown );
 
     # drop down menus
     my $top = Wx::GetTopLevelParent( $self );
@@ -209,6 +213,33 @@ sub OnSelChange {
     }
     Wx::LogMessage( 'Perl data: %s', $self->GetPlData( $item ) );
 }
+
+sub OnTreeKeyDown {
+    my( $self, $event ) = @_;
+    my $keycode = $event->GetKeyCode;
+    my $output = qq(KEYCODE: $keycode);
+    
+    # Wx >= 0.9911
+    if( defined( &Wx::TreeEvent::GetKeyEvent ) ) {
+    	my $modifiers = $event->GetKeyEvent->GetModifiers;
+    	$output .= qq( MODIFIERS:);
+    	if( $modifiers & wxMOD_ALT ) {
+    		$output .= qq( Alt);
+    	}
+    	if( $modifiers & wxMOD_SHIFT ) {
+    		$output .= qq( Shift);
+    	}	
+    	if( $modifiers & wxMOD_CONTROL ) {
+		    $output .= qq( Control);
+    	}	
+        if( $modifiers & wxMOD_META ) {
+			$output .= qq( Meta);
+    	}
+    }
+    Wx::LogMessage( qq(Keys $output) );
+    
+}
+
 
 sub menu { @{$_[0]->{menu}} }
 sub add_to_tags { qw(controls) }
