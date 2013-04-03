@@ -5,7 +5,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     14/08/2006
-## RCS-ID:      $Id: wxperl_demo.pl 3000 2011-02-02 12:32:55Z mdootson $
+## RCS-ID:      $Id: wxperl_demo.pl 3450 2013-03-30 04:03:16Z mdootson $
 ## Copyright:   (c) 2006-2008 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -13,6 +13,9 @@
 
 use strict;
 use Wx;
+
+# Demonstrate switching off Ubuntu Scrollbars
+BEGIN { $ENV{LIBOVERLAY_SCROLLBAR} = 0 if $^O =~ /^linux/i ; }
 
 # wxPerl exec only needed on Mac OS X pre Wx 0.98
 
