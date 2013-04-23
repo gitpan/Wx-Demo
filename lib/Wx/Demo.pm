@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     20/08/2006
-## RCS-ID:      $Id: Demo.pm 3417 2012-10-02 12:40:34Z mdootson $
+## RCS-ID:      $Id: Demo.pm 3483 2013-04-16 14:38:51Z mdootson $
 ## Copyright:   (c) 2006-2011 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -93,7 +93,7 @@ use Module::Pluggable::Object;
 
 use Wx::Demo::Source;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 __PACKAGE__->mk_ro_accessors( qw(tree widget_tree events_tree source notebook left_notebook failwidgets) );
 __PACKAGE__->mk_accessors( qw(search_term ) );
@@ -144,6 +144,10 @@ sub new {
     my $left_nb = Wx::Notebook->new
       ( $split1, -1, wxDefaultPosition, wxDefaultSize,
         wxNO_FULL_REPAINT_ON_RESIZE|wxCLIP_CHILDREN );
+      
+    # As per rt#84591
+    $split1->SetMinimumPaneSize( 30 );
+    $split2->SetMinimumPaneSize( 30 );
 
     my $tree        = Wx::TreeCtrl->new( $left_nb, -1 );
     my $widget_tree = Wx::TreeCtrl->new( $left_nb, -1 );

@@ -89,6 +89,7 @@ lib/Wx/DemoModules/wxColourDialog.pm
 lib/Wx/DemoModules/wxColourPickerCtrl.pm
 lib/Wx/DemoModules/wxComboBox.pm
 lib/Wx/DemoModules/wxComboCtrl.pm
+lib/Wx/DemoModules/wxCommandLinkButton.pm
 lib/Wx/DemoModules/wxContextHelpButton.pm
 lib/Wx/DemoModules/wxDatePickerCtrl.pm
 lib/Wx/DemoModules/wxDirDialog.pm
@@ -170,4 +171,5 @@ README.txt
 t/01_load.t
 t/zz_pod.t
 xt/02_load_plugins.t
-META.yml                                 Module meta-data (added by MakeMaker)
+META.yml                                 Module YAML meta-data (added by MakeMaker)
+META.json                                Module JSON meta-data (added by MakeMaker)

@@ -3,7 +3,7 @@
 ## Purpose:     wxPerl demo hint helper for Wx::BannerWindow
 ## Author:      Mark Dootson
 ## Created:     26/03/2012
-## RCS-ID:      $Id: CoreHints.pm 3409 2012-10-02 03:34:10Z mdootson $
+## RCS-ID:      $Id: CoreHints.pm 3480 2013-04-16 10:48:42Z mdootson $
 ## Copyright:   (c) 2012 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -234,6 +234,14 @@ sub can_load { return defined(&Wx::RearrangeCtrl::new); }
 sub title { 'wxRearrangeCtrl' }
 sub hint_message { 'wxRearrangeCtrl requires Wx >= 0.9914 and wxWidgets >= 2.9.4'; }
 
+#---------------------------------------------------------------------------
+package
+	Wx::DemoHints::wxCommandLinkButton;
+use base qw( Wx::DemoHints::CoreHintBase );
+__PACKAGE__->register_hint;
+sub can_load { return defined(&Wx::CommandLinkButton::new); }
+sub title { 'wxCommandLinkButton' }
+sub hint_message { 'wxCommandLinkButton requires Wx >= 0.9922 and wxWidgets >= 2.9.2'; }
 
 
 1;

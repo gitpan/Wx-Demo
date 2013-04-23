@@ -4,8 +4,8 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     28/08/2002
-## RCS-ID:      $Id: wxProgressDialog.pm 2189 2007-08-21 18:15:31Z mbarbon $
-## Copyright:   (c) 2002, 2005-2006 Mattia Barbon
+## RCS-ID:      $Id: wxProgressDialog.pm 3488 2013-04-16 22:02:47Z mdootson $
+## Copyright:   (c) 2002, 2005-2006, 2013 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
 #############################################################################
@@ -19,6 +19,9 @@ use Wx qw(:progressdialog);
 use Wx::Event qw(EVT_BUTTON);
 
 __PACKAGE__->mk_ro_accessors( qw(max_progress) );
+
+
+my $ver29 = ( $Wx::wxVERSION >= 2.009001 );
 
 sub new {
     my( $class, $parent ) = @_;
@@ -36,14 +39,18 @@ sub new {
 sub on_progress {
     my( $self, $event ) = @_;
     my( $max ) = $self->max_progress->GetValue;
+    my $flags = wxPD_CAN_ABORT|wxPD_AUTO_HIDE|wxPD_APP_MODAL|wxPD_ELAPSED_TIME|
+                wxPD_ESTIMATED_TIME|wxPD_REMAINING_TIME;
+                
+    my $ver30 = ( $Wx::wxVERSION >= 2.009001 );
+    
+    if( $ver30 ) {
+        $flags |= wxPD_CAN_SKIP;
+    }
 
     my $dialog = Wx::ProgressDialog->new( 'Progress dialog example',
                                           'An informative message',
-                                          $max, $self,
-                                          wxPD_CAN_ABORT|wxPD_AUTO_HIDE|
-                                          wxPD_APP_MODAL|wxPD_ELAPSED_TIME|
-                                          wxPD_ESTIMATED_TIME|
-                                          wxPD_REMAINING_TIME );
+                                          $max, $self, $flags );
 
     my $continue;
     foreach my $i ( 1 .. $max ) {
@@ -57,9 +64,19 @@ sub on_progress {
         }
         last unless $continue;
     }
+    unless( $continue ) {
+       if($ver30) {
+           my $reason = ( $dialog->WasCancelled ) ? 'Cancelled' : 'Skipped';
+           my $remains = $dialog->GetValue;
+           Wx::LogMessage(qq(User $reason Progress Dialog with value at $remains));
+       } else {
+           Wx::LogMessage(qq(User Cancelled Progress Dialog));
+       }
+    } else {
+       Wx::LogMessage( qq(Countdown from $max completed));
+    }
 
-    Wx::LogMessage( $continue ? "Countdown from $max finished" :
-                                "Progress dialog aborted" );
+    
 
     $dialog->Destroy;
 }
