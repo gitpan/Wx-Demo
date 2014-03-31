@@ -4,7 +4,7 @@
 ## Author:      Mattia Barbon
 ## Modified by:
 ## Created:     12/09/2001
-## RCS-ID:      $Id: wxPrinting.pm 2786 2010-02-07 03:29:28Z mdootson $
+## RCS-ID:      $Id: wxPrinting.pm 3505 2013-07-03 12:17:43Z mdootson $
 ## Copyright:   (c) 2001, 2003, 2005-2006 Mattia Barbon
 ## Licence:     This program is free software; you can redistribute it and/or
 ##              modify it under the same terms as Perl itself
@@ -205,6 +205,8 @@ sub OnPrintPage {
 
   if( $page == 1 ) { $this->{CANVAS}->OnDraw( $dc ); }
   if( $page == 2 ) { } # empty page
+  
+  return $page == 1 || $page == 2;
 }
 
 package Wx::DemoModules::wxPrinting::Canvas;

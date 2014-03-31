@@ -31,4 +31,4 @@ resources:
   homepage: http://wxperl.sourceforge.net/
   repository: https://wxperl.svn.sourceforge.net/svnroot/wxperl/wxDemo/trunk
   x_MailingList: wxperl-users@perl.org
-version: 0.21
+version: 0.22
